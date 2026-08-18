@@ -1,0 +1,7 @@
+{
+  // Make the editor use the workspace TypeScript (5.9.x) instead of any
+  // globally installed older version (e.g. 4.7, which predates the
+  // "bundler" moduleResolution). Applies in VS Code / Cursor / Windsurf.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

@@ -40,5 +40,7 @@ createApp(InspectorApp, {
   transportFactory: () => new BrowserTransport(),
   initialUrl: settings.url,
   autoConnect: settings.autoConnect,
-  onConnected: ({ url }) => saveSettings(url),
+  // Explicit type: `createApp`'s rootProps is a loose Record, so destructured
+  // params need their own annotation to avoid TS7031.
+  onConnected: ({ url }: { url: string }) => saveSettings(url),
 }).mount("#app");

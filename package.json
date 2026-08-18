@@ -11,6 +11,7 @@
   "scripts": {
     "build": "npm run build -w @just-inspector/protocol && npm run build -w @just-inspector/client && npm run build -w @just-inspector/inspector-ui && npm run build -w just-inspector-web && npm run build -w just-inspector-vscode",
     "build:packages": "npm run build -w @just-inspector/protocol && npm run build -w @just-inspector/client && npm run build -w @just-inspector/inspector-ui",
+    "typecheck": "tsc --noEmit -p packages/protocol/tsconfig.json && tsc --noEmit -p packages/client/tsconfig.json && vue-tsc --noEmit -p packages/inspector-ui/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json && tsc --noEmit -p apps/vscode-extension/webview/tsconfig.json && tsc --noEmit -p apps/mock-server/tsconfig.json && tsc --noEmit -p apps/vscode-extension/tsconfig.json",
     "dev:web": "npm run dev -w just-inspector-web",
     "mock": "npm run start -w just-inspector-mock-server",
     "smoke": "npm run smoke -w just-inspector-mock-server",
@@ -26,6 +27,7 @@
     "fsevents@2.3.3": true
   },
   "devDependencies": {
+    "typescript": "^5.9.0",
     "vite-plugin-singlefile": "^2.3.3"
   }
 }

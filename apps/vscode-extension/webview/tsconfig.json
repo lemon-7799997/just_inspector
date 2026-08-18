@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "bundler",
     "lib": [
@@ -7,11 +7,10 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "types": [
-      "node"
-    ]
+    "noEmit": true
   },
   "include": [
-    "src"
+    "src",
+    "vite.config.ts"
   ]
 }
