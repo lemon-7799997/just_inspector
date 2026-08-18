@@ -1,0 +1,13 @@
+[package]
+name = "bevy-inspector-example"
+version = "0.1.0"
+edition = "2021"
+description = "Minimal Bevy integration for Just Inspector: exposes demo entities over the JSON WebSocket protocol on ws://127.0.0.1:8765"
+
+[dependencies]
+bevy = "0.19"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time"] }
+tokio-tungstenite = "0.30"
+futures-util = "0.3"
+crossbeam-channel = "0.5"
+serde_json = "1"

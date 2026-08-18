@@ -1,0 +1,84 @@
+{
+  "name": "just-inspector-vscode",
+  "displayName": "Just Inspector",
+  "description": "Inspect Godot / Bevy game runtime state over WebSocket from inside VS Code. The UI lives in a webview; the connection layer runs in the extension host.",
+  "version": "0.1.0",
+  "publisher": "just-inspector",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "files": [
+    "dist",
+    "media",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onView:justInspector.view",
+    "onCommand:justInspector.open"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "justInspector",
+          "title": "Just Inspector",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "justInspector": [
+        {
+          "type": "webview",
+          "id": "justInspector.view",
+          "name": "Inspector"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "justInspector.open",
+        "title": "Just Inspector: Open Inspector"
+      }
+    ],
+    "configuration": {
+      "title": "Just Inspector",
+      "properties": {
+        "justInspector.serverUrl": {
+          "type": "string",
+          "default": "ws://127.0.0.1:8765",
+          "description": "WebSocket URL of the game's inspector server."
+        },
+        "justInspector.autoConnect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically connect to the configured server URL when the inspector opens."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build:webview": "npm run build -w just-inspector-vscode-webview",
+    "build:host": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --external:bufferutil --external:utf-8-validate --outfile=dist/extension.js",
+    "build": "npm run build:webview && npm run build:host",
+    "package": "npm run build && npx @vscode/vsce package --no-dependencies --allow-missing-repository --out ../../dist/just-inspector-0.1.0.vsix",
+    "watch": "tsc -p tsconfig.json --watch --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.90.0",
+    "@types/ws": "^8.5.0",
+    "@just-inspector/client": "*",
+    "@just-inspector/protocol": "*",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.0",
+    "ws": "^8.21.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "just-inspector-mock-server",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Mock game server for Just Inspector: simulates a Godot/Bevy-like scene graph over the WebSocket protocol.",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "smoke": "tsx src/smoke.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@just-inspector/protocol": "*",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@just-inspector/client": "*",
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.9.0"
+  }
+}

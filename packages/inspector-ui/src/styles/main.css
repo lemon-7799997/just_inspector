@@ -1,0 +1,170 @@
+/* Just Inspector — global theme (dark, VS Code-flavored). */
+
+:root {
+  --ji-bg: #1e1e1e;
+  --ji-bg-alt: #252526;
+  --ji-bg-hover: #2a2d2e;
+  --ji-bg-input: #3c3c3c;
+  --ji-bg-input-focus: #3f3f3f;
+  --ji-border: #3f3f3f;
+  --ji-border-strong: #4d4d4d;
+  --ji-text: #cccccc;
+  --ji-text-strong: #e6e6e6;
+  --ji-text-dim: #8a8a8a;
+  --ji-accent: #4fc1ff;
+  --ji-accent-dim: rgba(79, 193, 255, 0.16);
+  --ji-ok: #4ec9b0;
+  --ji-warn: #cca700;
+  --ji-danger: #f14c4c;
+  --ji-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --ji-radius: 3px;
+  --ji-font:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --ji-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--ji-font);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ji-text);
+  background: var(--ji-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ji-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ji-app__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* ------------------------------- inputs -------------------------------- */
+
+.ji-input {
+  width: 100%;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--ji-text);
+  background: var(--ji-bg-input);
+  border: 1px solid var(--ji-border);
+  border-radius: var(--ji-radius);
+  outline: none;
+}
+
+.ji-input:focus {
+  border-color: var(--ji-accent);
+  background: var(--ji-bg-input-focus);
+}
+
+.ji-input[readonly] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.ji-input::placeholder {
+  color: var(--ji-text-dim);
+}
+
+textarea.ji-input {
+  resize: vertical;
+  min-height: 60px;
+  font-family: var(--ji-mono);
+}
+
+select.ji-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 20px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ji-text) 50%),
+    linear-gradient(135deg, var(--ji-text) 50%, transparent 50%);
+  background-position:
+    calc(100% - 12px) 55%,
+    calc(100% - 8px) 55%;
+  background-size:
+    4px 4px,
+    4px 4px;
+  background-repeat: no-repeat;
+}
+
+/* ------------------------------- buttons -------------------------------- */
+
+.ji-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--ji-text);
+  background: var(--ji-bg-input);
+  border: 1px solid var(--ji-border-strong);
+  border-radius: var(--ji-radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ji-btn:hover {
+  background: #454545;
+}
+
+.ji-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ji-btn--primary {
+  background: var(--ji-accent-dim);
+  border-color: var(--ji-accent);
+  color: var(--ji-accent);
+}
+
+.ji-btn--primary:hover {
+  background: rgba(79, 193, 255, 0.28);
+}
+
+.ji-btn--danger {
+  color: var(--ji-danger);
+  border-color: rgba(241, 76, 76, 0.5);
+}
+
+/* ------------------------------- scrollbar ------------------------------ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
