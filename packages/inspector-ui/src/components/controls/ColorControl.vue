@@ -113,6 +113,9 @@ function onSvPointerDown(e: PointerEvent): void {
 }
 
 function updateSv(e: PointerEvent): void {
+  // Only change the color while the mouse button is held (started by
+  // onSvPointerDown); hovering alone must not modify it.
+  if (!dragging.value) return;
   const el = e.currentTarget as HTMLElement;
   const rect = el.getBoundingClientRect();
   s.value = Math.min(1, Math.max(0, (e.clientX - rect.left) / Math.max(rect.width, 1)));
