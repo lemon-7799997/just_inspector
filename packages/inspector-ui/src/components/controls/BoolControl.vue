@@ -61,7 +61,7 @@ function onChange(e: Event): void {
   top: 2px;
   width: 4px;
   height: 8px;
-  border: solid #101010;
+  border: solid #ffffff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }

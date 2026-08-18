@@ -1,5 +1,6 @@
 import { shallowRef, ref, onMounted, onUnmounted } from "vue";
 import { InspectorClient, Events, PROTOCOL_VERSION, type ClientStatus, type GameInfo, type NodeDetail, type TaggedValue, type Transport, type TreeNode } from "@just-inspector/client";
+import { createPersistence, type TreeDockPosition } from "./persistence";
 
 export interface ToastItem {
   id: number;
@@ -26,6 +27,15 @@ export interface UseInspectorOptions {
 export function useInspector(options: UseInspectorOptions) {
   const transport = options.transportFactory();
   const client = new InspectorClient(transport, { autoReconnect: true });
+  const persistence = createPersistence(transport);
+
+  /** Saved tree-panel dock position (persisted per mode). */
+  const treeDock = ref<TreeDockPosition>((persistence.get("treeDock") as TreeDockPosition) ?? "left");
+
+  function setTreeDock(dock: TreeDockPosition): void {
+    treeDock.value = dock;
+    persistence.set("treeDock", dock);
+  }
 
   const status = ref<ClientStatus>("disconnected");
   const gameInfo = shallowRef<GameInfo | null>(null);
@@ -271,6 +281,8 @@ export function useInspector(options: UseInspectorOptions) {
     toasts,
     log,
     logVisible,
+    treeDock,
+    setTreeDock,
     connect,
     disconnect,
     refreshTree,

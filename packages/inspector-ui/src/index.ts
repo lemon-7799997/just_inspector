@@ -18,3 +18,4 @@ export { default as JsonControl } from "./components/controls/JsonControl.vue";
 
 export { useInspector } from "./composables/useInspector";
 export type { ToastItem, LogEntry, InspectorStore } from "./composables/useInspector";
+export type { TreeDockPosition, Persistence } from "./composables/persistence";

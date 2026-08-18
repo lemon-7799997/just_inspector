@@ -64,6 +64,16 @@ export class VscodeWebviewTransport extends TransportBase implements Transport {
     this.api.postMessage({ type: "inspector-disconnect" });
   }
 
+  /** Webview workspace state (persisted by the extension host). */
+  getState(): unknown {
+    return this.api.getState?.();
+  }
+
+  /** Persist webview workspace state (survives webview reloads). */
+  setState(state: unknown): void {
+    this.api.setState?.(state);
+  }
+
   dispose(): void {
     if (this.attached && typeof window !== "undefined") {
       window.removeEventListener("message", this.handleMessage);

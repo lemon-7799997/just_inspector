@@ -119,7 +119,7 @@ function onCommit(value: TaggedValue): void {
   align-items: flex-start;
   gap: 10px;
   padding: 4px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .ji-row:hover {

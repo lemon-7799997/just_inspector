@@ -53,7 +53,7 @@ function fmtTime(at: number): string {
   flex-direction: column;
   height: 180px;
   border-top: 1px solid var(--ji-border);
-  background: #171717;
+  background: var(--ji-bg-hover);
 }
 
 .ji-log__bar {

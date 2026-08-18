@@ -108,11 +108,11 @@ function draw(): void {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
 
-  ctx.fillStyle = "#202020";
+  ctx.fillStyle = "#fafafa";
   ctx.fillRect(0, 0, w, h);
 
   // grid
-  ctx.strokeStyle = "#2b2b2b";
+  ctx.strokeStyle = "#e5e5ea";
   ctx.lineWidth = 1;
   for (let t = 0; t <= 10; t++) {
     const gx = (t / 10) * w;
@@ -128,14 +128,14 @@ function draw(): void {
   }
 
   // axis frame
-  ctx.strokeStyle = "#454545";
+  ctx.strokeStyle = "#c9c9d1";
   ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
 
   const pts = points.value;
   if (pts.length === 0) return;
 
   // curve
-  ctx.strokeStyle = "#4fc1ff";
+  ctx.strokeStyle = "#2563eb";
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   if (mode.value === "linear" || pts.length === 1) {
@@ -158,7 +158,7 @@ function draw(): void {
     const isSel = selected.value === i;
 
     if (mode.value === "bezier" && isSel && editable.value) {
-      ctx.strokeStyle = "rgba(255,255,255,0.45)";
+      ctx.strokeStyle = "rgba(0,0,0,0.35)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(px, py);
@@ -168,17 +168,17 @@ function draw(): void {
       ctx.moveTo(px, py);
       ctx.lineTo(mapX(p.x + p.lx), mapY(p.y + p.ly));
       ctx.stroke();
-      ctx.fillStyle = "#ffd479";
+      ctx.fillStyle = "#f59e0b";
       ctx.fillRect(mapX(p.x + p.rx) - 3.5, mapY(p.y + p.ry) - 3.5, 7, 7);
       ctx.fillRect(mapX(p.x + p.lx) - 3.5, mapY(p.y + p.ly) - 3.5, 7, 7);
     }
 
     ctx.beginPath();
     ctx.arc(px, py, isSel ? 5 : 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = isSel ? "#ffd479" : "#e8e8e8";
+    ctx.fillStyle = isSel ? "#f59e0b" : "#52525b";
     ctx.fill();
     if (isSel) {
-      ctx.strokeStyle = "#4fc1ff";
+      ctx.strokeStyle = "#2563eb";
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
