@@ -17,10 +17,14 @@ const track = ref<HTMLElement | null>(null);
 const dragging = ref(false);
 /** Local value while dragging (props lag behind the live emits). */
 const display = ref(props.modelValue.value);
+/** The number input keeps its own draft text while focused so clamping /
+ *  quantization only ever happens on blur/enter (never mid-edit). */
+const editing = ref(false);
+const numberText = ref(fmt(props.modelValue.value));
 
 const min = computed(() => props.hint?.min ?? 0);
 const max = computed(() => props.hint?.max ?? 1);
-const step = computed(() => props.hint?.step ?? (props.modelValue.type === "int" ? 1 : Math.max((max.value - min.value) / 100, 0.001)));
+const step = computed(() => props.hint?.step ?? (props.modelValue.type === "int" ? 1 : 0.1));
 const isInt = computed(() => props.modelValue.type === "int");
 const current = computed(() => (dragging.value ? display.value : props.modelValue.value));
 
@@ -30,21 +34,30 @@ const pct = computed(() => {
   return Math.min(100, Math.max(0, ((current.value - min.value) / span) * 100));
 });
 
-watch(
-  () => props.modelValue.value,
-  (v) => {
-    if (!dragging.value) display.value = v;
-  },
-);
+watch(current, (v) => {
+  display.value = v;
+  if (!editing.value) numberText.value = fmt(v);
+});
 
 function clamp(n: number): number {
   return Math.min(max.value, Math.max(min.value, n));
 }
 
+/**
+ * Snaps onto the step grid *anchored at `min`*: value = min + k·step. This
+ * keeps the exact endpoints reachable (the previous absolute `round(v/step)`
+ * grid made the far-left drag stop short of `min`, e.g. 0.117 instead of
+ * 0.1). The result is re-clamped for float rounding.
+ */
 function quantize(n: number): number {
   let v = clamp(n);
-  if (step.value > 0) v = Math.round(v / step.value) * step.value;
-  return isInt.value ? Math.round(v) : v;
+  const s = step.value;
+  if (s > 0) {
+    const k = Math.round((v - min.value) / s);
+    v = min.value + k * s;
+  }
+  if (isInt.value) v = Math.round(v);
+  return clamp(v);
 }
 
 function make(n: number): IntValue | FloatValue {
@@ -97,14 +110,29 @@ function onKeyDown(e: KeyboardEvent): void {
   }
 }
 
-function onNumberInput(e: Event): void {
-  const n = Number((e.target as HTMLInputElement).value);
-  if (Number.isFinite(n)) setValue(quantize(n), true);
+/** While editing: keep the raw draft only — no clamp, no quantize, no emit. */
+function onNumberFocus(): void {
+  if (props.readOnly) return;
+  editing.value = true;
 }
 
-function onNumberCommit(e: Event): void {
-  const n = Number((e.target as HTMLInputElement).value);
-  if (Number.isFinite(n)) setValue(quantize(n), false, true);
+function onNumberInput(e: Event): void {
+  if (!editing.value) return;
+  numberText.value = (e.target as HTMLInputElement).value;
+}
+
+/** On blur / Enter / change: clamp + quantize once and commit. */
+function onNumberCommit(): void {
+  if (!editing.value) return;
+  editing.value = false;
+  const n = Number(numberText.value);
+  if (!Number.isFinite(n)) {
+    numberText.value = fmt(current.value);
+    return;
+  }
+  const v = quantize(n);
+  numberText.value = fmt(v);
+  setValue(v, false, true);
 }
 
 function fmt(n: number): string {
@@ -136,11 +164,12 @@ function fmt(n: number): string {
     <input
       class="ji-input ji-slider__number"
       type="number"
-      :value="fmt(current)"
+      :value="numberText"
       :min="min"
       :max="max"
       :step="step"
       :readonly="readOnly"
+      @focus="onNumberFocus"
       @input="onNumberInput"
       @change="onNumberCommit"
       @keydown.enter.prevent="onNumberCommit"
