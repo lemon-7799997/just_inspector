@@ -58,6 +58,18 @@ export interface PropertyDescriptor {
   hint?: PropertyHint;
   readOnly?: boolean;
   tooltip?: string;
+  /**
+   * Optional section title. Consecutive properties sharing a group are shown
+   * under one collapsible header (expanded by default); left ungrouped
+   * otherwise.
+   */
+  group?: string;
+  /**
+   * The value the game started with (its config as loaded at boot). When
+   * present the UI offers a per-field reset button that writes this value
+   * back through `Runtime.setValue`.
+   */
+  defaultValue?: TaggedValue;
 }
 
 /** Lightweight tree node (no property data). */

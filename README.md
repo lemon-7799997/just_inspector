@@ -36,7 +36,7 @@ npm run mock
 
 # 2a. Browser mode
 npm run dev:web
-#   -> open http://localhost:5173 and click Connect
+#   -> open http://localhost:5173 (auto-connects, retrying until the game is up)
 
 # 2b. VS Code mode
 npm run build -w just-inspector-vscode
@@ -120,6 +120,26 @@ game server ◄──ws──► extension host (NodeTransport) ◄──postMes
 > the curve control is a small dependency-free canvas component in
 > `packages/inspector-ui` — color picking uses the most popular Vue 3 picker
 > (`vue-color-kit`).
+
+## UI features
+
+- **Auto-connect** — the browser build links to `ws://127.0.0.1:8765` on load
+  and keeps retrying (1s, growing to 15s) until the game's server is up.
+- **Field groups** — properties carrying a `group` render under one collapsible
+  header, expanded by default; order comes from the game. See
+  [`docs/protocol.md`](docs/protocol.md).
+- **Field-list toolbar** — right-aligned above the rows: *Reset All* (write every
+  field's startup value back), *Fold All* / *Unfold All* (collapse or expand all
+  groups at once).
+- **Per-field reset** — when the game sends a `defaultValue` (its startup
+  config), each row gets a reset icon that writes that value back.
+- **Drag to scrub** — press a numeric row's label and drag left/right to change
+  the value; sensitivity accelerates the further you drag.
+- **Display settings** (gear icon in the connection bar) — toggle
+  spaced-UpperCamelCase field names (`field_center` → "Field Center"), on by
+  default. Explicit `displayName`s from the game always win.
+- **Tree dock** — dock the scene tree left / top / right; the choice is
+  persisted per packaging mode.
 
 ## Protocol in one screen
 

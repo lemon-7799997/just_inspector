@@ -110,6 +110,14 @@ select.ji-input {
 
 /* ------------------------------- buttons -------------------------------- */
 
+/* Active numeric-label drag (see composables/numberScrub.ts): the resize
+   cursor has to follow the pointer even after it leaves the label. */
+body.ji-scrubbing,
+body.ji-scrubbing * {
+  cursor: ew-resize !important;
+  user-select: none !important;
+}
+
 .ji-btn {
   padding: 3px 10px;
   font-size: 12px;

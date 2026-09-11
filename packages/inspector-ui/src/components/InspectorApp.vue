@@ -27,7 +27,7 @@ const store = useInspector({
   autoConnect: props.autoConnect,
 });
 
-const { status, gameInfo, tree, selectedId, detail, url, toasts, log, logVisible, treeDock } = store;
+const { status, gameInfo, tree, selectedId, detail, url, toasts, log, logVisible, treeDock, prettyNames } = store;
 
 async function handleConnect(targetUrl: string): Promise<void> {
   await store.connect(targetUrl);
@@ -44,10 +44,12 @@ async function handleConnect(targetUrl: string): Promise<void> {
       :game-info="gameInfo"
       :url="url"
       :log-visible="logVisible"
+      :pretty-names="prettyNames"
       @connect="handleConnect"
       @disconnect="store.disconnect"
       @refresh="store.refreshTree"
       @toggle-log="store.toggleLog"
+      @pretty-names-change="store.setPrettyNames"
     />
     <div class="ji-app__body" :class="`is-dock-${treeDock}`">
       <NodeTree
@@ -57,7 +59,12 @@ async function handleConnect(targetUrl: string): Promise<void> {
         @select="store.selectNode"
         @dock-change="store.setTreeDock"
       />
-      <PropertyGrid :detail="detail" @update="store.onUpdate" @commit="store.onCommit" />
+      <PropertyGrid
+        :detail="detail"
+        :pretty-names="prettyNames"
+        @update="store.onUpdate"
+        @commit="store.onCommit"
+      />
     </div>
     <EventLog :visible="logVisible" :log="log" :on-clear="store.clearLog" :on-close="store.toggleLog" />
     <ToastList :toasts="toasts" @dismiss="store.dismissToast" />
@@ -81,7 +88,7 @@ async function handleConnect(targetUrl: string): Promise<void> {
   flex-direction: row-reverse;
 }
 
-.ji-app__body.is-dock-bottom {
+.ji-app__body.is-dock-top {
   flex-direction: column;
 }
 
@@ -90,13 +97,15 @@ async function handleConnect(targetUrl: string): Promise<void> {
   border-left: 1px solid var(--ji-border);
 }
 
-.ji-app__body.is-dock-bottom :deep(.ji-tree) {
+/* Vertical layout: the tree is a fixed-height strip above the property grid
+   (hence "Dock top"), so the divider belongs on its bottom edge. */
+.ji-app__body.is-dock-top :deep(.ji-tree) {
   flex: none;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   height: 220px;
   border-right: none;
-  border-top: 1px solid var(--ji-border);
+  border-bottom: 1px solid var(--ji-border);
 }
 </style>

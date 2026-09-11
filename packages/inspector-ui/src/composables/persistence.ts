@@ -1,7 +1,13 @@
 import type { Transport } from "@just-inspector/client";
 
-/** Where the scene tree panel is docked relative to the property grid. */
-export type TreeDockPosition = "left" | "bottom" | "right";
+/**
+ * Where the scene tree panel is docked relative to the property grid.
+ *
+ * `"top"` lays the tree out above the grid (the tree's own header/filter bar
+ * ends up at the very top of the window); the id was called `"bottom"` before
+ * 0.0.6 and saved values are migrated in `useInspector`.
+ */
+export type TreeDockPosition = "left" | "top" | "right";
 
 /** Tiny key/value persistence that works in both packaging modes:
  *  - browser: localStorage

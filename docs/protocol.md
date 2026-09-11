@@ -81,6 +81,8 @@ a fixed `sessionId` / `{ ok: true }`.
       "value": { "type": "int", "value": 80 },
       "control": "slider",
       "hint": { "min": 0, "max": 100, "step": 1 },
+      "group": "Stats",
+      "defaultValue": { "type": "int", "value": 100 },
       "readOnly": false,
       "tooltip": "..."
     }
@@ -91,6 +93,15 @@ a fixed `sessionId` / `{ ok: true }`.
 `control` (optional) hints at the widget; `"auto"` or missing = the UI derives
 one from `value.type`. `hint` tunes the control: `min/max/step`, `options`,
 `multiline`, `placeholder`, `valueMin/valueMax/timeMin/timeMax/curveEditable`.
+
+`group` (optional) is a section title: consecutive properties sharing a group
+are rendered under one collapsible header (expanded by default), which is how
+a game can lay out a large config as ordered sections.
+
+`defaultValue` (optional) is the value the game started with (for a config
+resource: the TOML it loaded at boot). When present the UI shows a per-field
+reset button that sends the default back through `Runtime.setValue`. Games
+that don't track defaults simply omit the key.
 
 ### Tagged values
 

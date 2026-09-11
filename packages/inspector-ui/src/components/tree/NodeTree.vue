@@ -35,7 +35,7 @@ function select(id: string): void {
 
 const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }> = [
   { pos: "left", title: "Dock left", icon: "dock-left" },
-  { pos: "bottom", title: "Dock bottom", icon: "dock-bottom" },
+  { pos: "top", title: "Dock top", icon: "dock-top" },
   { pos: "right", title: "Dock right", icon: "dock-right" },
 ];
 </script>
@@ -55,9 +55,9 @@ const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }>
           <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
           <rect x="2" y="2" width="4" height="12" rx="1" fill="currentColor" />
         </svg>
-        <svg v-else-if="b.icon === 'dock-bottom'" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+        <svg v-else-if="b.icon === 'dock-top'" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
-          <rect x="2" y="10" width="12" height="4" rx="1" fill="currentColor" />
+          <rect x="2" y="2" width="12" height="4" rx="1" fill="currentColor" />
         </svg>
         <svg v-else viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
@@ -91,6 +91,10 @@ const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }>
   flex: 0 0 280px;
   min-width: 180px;
   max-width: 45%;
+  /* Flex items default to `min-height: auto`, which stops the list from
+     shrinking in the vertical (top-docked) layout — without this the panel
+     grows past the window instead of scrolling. */
+  min-height: 0;
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--ji-border);

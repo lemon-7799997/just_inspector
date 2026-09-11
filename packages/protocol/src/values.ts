@@ -223,3 +223,17 @@ function fmt(n: number): string {
 export function toPlain(v: TaggedValue): unknown {
   return v as unknown;
 }
+
+/**
+ * Structural equality for tagged values. Used by the UI to decide whether a
+ * field still holds its `defaultValue` (so the reset button can be dimmed).
+ *
+ * Key order is stable (the game and the factories both emit `type` first), so
+ * a JSON comparison is enough and avoids a hand-written case per value type.
+ */
+export function valuesEqual(a: TaggedValue | undefined, b: TaggedValue | undefined): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.type !== b.type) return false;
+  return JSON.stringify(a) === JSON.stringify(b);
+}

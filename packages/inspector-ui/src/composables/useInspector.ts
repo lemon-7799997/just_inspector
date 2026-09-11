@@ -30,11 +30,34 @@ export function useInspector(options: UseInspectorOptions) {
   const persistence = createPersistence(transport);
 
   /** Saved tree-panel dock position (persisted per mode). */
-  const treeDock = ref<TreeDockPosition>((persistence.get("treeDock") as TreeDockPosition) ?? "left");
+  const treeDock = ref<TreeDockPosition>(loadTreeDock());
 
   function setTreeDock(dock: TreeDockPosition): void {
     treeDock.value = dock;
     persistence.set("treeDock", dock);
+  }
+
+  /**
+   * Read the persisted dock position. The vertical layout used to be saved as
+   * `"bottom"` (even though it renders the tree *above* the grid); migrate
+   * that saved value to its current name, `"top"`.
+   */
+  function loadTreeDock(): TreeDockPosition {
+    const saved = persistence.get("treeDock");
+    if (saved === "bottom") return "top";
+    return saved === "top" || saved === "right" || saved === "left" ? saved : "left";
+  }
+
+  /**
+   * Global display preference: render machine field names as spaced
+   * UpperCamelCase (`field_center` -> "Field Center"). On by default; games can
+   * still override a single field with an explicit `displayName`.
+   */
+  const prettyNames = ref<boolean>(persistence.get("prettyNames") !== false);
+
+  function setPrettyNames(value: boolean): void {
+    prettyNames.value = value;
+    persistence.set("prettyNames", value);
   }
 
   const status = ref<ClientStatus>("disconnected");
@@ -86,7 +109,9 @@ export function useInspector(options: UseInspectorOptions) {
     });
 
     if (options.autoConnect && url.value) {
-      void connect();
+      // Quiet: the game may legitimately not be running yet; the reconnect
+      // loop keeps trying and the status dot already shows the state.
+      void connect(undefined, true);
     }
 
     // VS Code mode: the extension host pushes the configured server URL.
@@ -125,21 +150,25 @@ export function useInspector(options: UseInspectorOptions) {
     }
   }
 
-  async function connect(urlArg?: string): Promise<void> {
+  /**
+   * Connect to `urlArg` (or the current URL). `quiet` suppresses the
+   * connecting/failure toasts, for the automatic startup attempt.
+   */
+  async function connect(urlArg?: string, quiet = false): Promise<void> {
     if (urlArg) url.value = urlArg;
     if (status.value === "connecting" || status.value === "connected") return;
     if (!url.value.trim()) {
       toast("error", "Enter a WebSocket URL first");
       return;
     }
-    toast("info", `Connecting to ${url.value}…`);
+    if (!quiet) toast("info", `Connecting to ${url.value}…`);
     pushLog("out", `connect ${url.value}`);
     try {
       await client.connect(url.value.trim());
       toast("success", "Connected");
       await refreshTree();
     } catch (err) {
-      toast("error", `Connection failed: ${(err as Error).message}`);
+      if (!quiet) toast("error", `Connection failed: ${(err as Error).message}`);
     }
   }
 
@@ -283,6 +312,8 @@ export function useInspector(options: UseInspectorOptions) {
     logVisible,
     treeDock,
     setTreeDock,
+    prettyNames,
+    setPrettyNames,
     connect,
     disconnect,
     refreshTree,
