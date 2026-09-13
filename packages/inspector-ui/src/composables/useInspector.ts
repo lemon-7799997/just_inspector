@@ -1,6 +1,6 @@
-import { shallowRef, ref, onMounted, onUnmounted } from "vue";
+import { shallowRef, ref, computed, onMounted, onUnmounted } from "vue";
 import { InspectorClient, Events, PROTOCOL_VERSION, type ClientStatus, type GameInfo, type NodeDetail, type TaggedValue, type Transport, type TreeNode } from "@just-inspector/client";
-import { createPersistence, type TreeDockPosition } from "./persistence";
+import { createPersistence, type TreeDockPosition, type TreeDockSide } from "./persistence";
 
 export interface ToastItem {
   id: number;
@@ -29,7 +29,7 @@ export function useInspector(options: UseInspectorOptions) {
   const client = new InspectorClient(transport, { autoReconnect: true });
   const persistence = createPersistence(transport);
 
-  /** Saved tree-panel dock position (persisted per mode). */
+  /** Saved tree-panel dock side (persisted per mode). */
   const treeDock = ref<TreeDockPosition>(loadTreeDock());
 
   function setTreeDock(dock: TreeDockPosition): void {
@@ -38,15 +38,40 @@ export function useInspector(options: UseInspectorOptions) {
   }
 
   /**
-   * Read the persisted dock position. The vertical layout used to be saved as
-   * `"bottom"` (even though it renders the tree *above* the grid); migrate
-   * that saved value to its current name, `"top"`.
+   * Read the persisted dock side.
+   *
+   * Only `left` / `right` are selectable now, so a stored vertical layout
+   * (`"top"`, or the pre-0.0.6 `"bottom"`) carries no horizontal preference to
+   * restore and falls back to the default. The vertical layout is derived from
+   * the window aspect instead — see [`treeDockSide`].
    */
   function loadTreeDock(): TreeDockPosition {
-    const saved = persistence.get("treeDock");
-    if (saved === "bottom") return "top";
-    return saved === "top" || saved === "right" || saved === "left" ? saved : "left";
+    return persistence.get("treeDock") === "right" ? "right" : "left";
   }
+
+  /**
+   * Width/height ratio below which the shell stops showing the tree as a side
+   * panel and stacks it above (or below) the grid instead. A narrow window has
+   * no width to spare for two columns, so the vertical layout wins there.
+   */
+  const VERTICAL_BELOW_ASPECT = 1;
+
+  /** Whether the window is narrower than it is tall. */
+  const verticalLayout = ref(
+    typeof window !== "undefined" && window.innerWidth / Math.max(1, window.innerHeight) < VERTICAL_BELOW_ASPECT,
+  );
+
+  function updateLayout(): void {
+    verticalLayout.value = window.innerWidth / Math.max(1, window.innerHeight) < VERTICAL_BELOW_ASPECT;
+  }
+
+  /**
+   * The dock side to render: the saved side while the window is wide enough for
+   * two columns, a full-width strip (above or below the grid) when it is not.
+   */
+  const treeDockSide = computed<TreeDockSide>(() =>
+    verticalLayout.value ? (treeDock.value === "left" ? "top" : "bottom") : treeDock.value,
+  );
 
   /**
    * Global display preference: render machine field names as spaced
@@ -80,6 +105,9 @@ export function useInspector(options: UseInspectorOptions) {
   let nodeOff: () => void = () => {};
 
   onMounted(() => {
+    window.addEventListener("resize", updateLayout);
+    updateLayout();
+
     statusOff = client.onStatus((s) => {
       status.value = s;
       if (s === "disconnected" && gameInfo.value) {
@@ -127,6 +155,7 @@ export function useInspector(options: UseInspectorOptions) {
   });
 
   onUnmounted(() => {
+    window.removeEventListener("resize", updateLayout);
     statusOff();
     readyOff();
     treeOff();
@@ -312,6 +341,7 @@ export function useInspector(options: UseInspectorOptions) {
     logVisible,
     treeDock,
     setTreeDock,
+    treeDockSide,
     prettyNames,
     setPrettyNames,
     connect,

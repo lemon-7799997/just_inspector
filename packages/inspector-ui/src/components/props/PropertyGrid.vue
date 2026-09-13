@@ -170,7 +170,7 @@ function onRowCommit(property: string, value: TaggedValue): void {
   flex: 1;
   min-width: 0;
   /* Flex items default to `min-height: auto`; without this the property list
-     cannot shrink below its content in the vertical (top-docked) layout, so it
+     cannot shrink below its content in the vertical (portrait) layout, so it
      grows past the window instead of showing a scrollbar. */
   min-height: 0;
   display: flex;

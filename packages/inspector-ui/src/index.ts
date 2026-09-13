@@ -18,7 +18,7 @@ export { default as JsonControl } from "./components/controls/JsonControl.vue";
 
 export { useInspector } from "./composables/useInspector";
 export type { ToastItem, LogEntry, InspectorStore } from "./composables/useInspector";
-export type { TreeDockPosition, Persistence } from "./composables/persistence";
+export type { TreeDockPosition, TreeDockSide, Persistence } from "./composables/persistence";
 export { humanizeFieldName } from "./composables/format";
 export { useNumberScrub } from "./composables/numberScrub";
 export type { NumberScrubOptions } from "./composables/numberScrub";

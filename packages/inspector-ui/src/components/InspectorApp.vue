@@ -27,7 +27,7 @@ const store = useInspector({
   autoConnect: props.autoConnect,
 });
 
-const { status, gameInfo, tree, selectedId, detail, url, toasts, log, logVisible, treeDock, prettyNames } = store;
+const { status, gameInfo, tree, selectedId, detail, url, toasts, log, logVisible, treeDock, treeDockSide, prettyNames } = store;
 
 async function handleConnect(targetUrl: string): Promise<void> {
   await store.connect(targetUrl);
@@ -51,7 +51,9 @@ async function handleConnect(targetUrl: string): Promise<void> {
       @toggle-log="store.toggleLog"
       @pretty-names-change="store.setPrettyNames"
     />
-    <div class="ji-app__body" :class="`is-dock-${treeDock}`">
+    <!-- `treeDockSide` is the *rendered* side: whereas `treeDock` is the
+         persisted left/right choice, a portrait window maps it to top/bottom. -->
+    <div class="ji-app__body" :class="`is-dock-${treeDockSide}`">
       <NodeTree
         :root="tree"
         :selected-id="selectedId"
@@ -78,7 +80,9 @@ async function handleConnect(targetUrl: string): Promise<void> {
   min-height: 0;
 }
 
-/* --- tree dock positions (persisted; default = left) ------------------- */
+/* --- tree dock sides --------------------------------------------------
+   `left` / `right` are the persisted choices; `top` / `bottom` are what a
+   portrait (taller-than-wide) window turns them into. */
 
 .ji-app__body.is-dock-left {
   flex-direction: row;
@@ -92,20 +96,33 @@ async function handleConnect(targetUrl: string): Promise<void> {
   flex-direction: column;
 }
 
+/* The tree is the first child, so `column-reverse` puts it at the bottom. */
+.ji-app__body.is-dock-bottom {
+  flex-direction: column-reverse;
+}
+
 .ji-app__body.is-dock-right :deep(.ji-tree) {
   border-right: none;
   border-left: 1px solid var(--ji-border);
 }
 
-/* Vertical layout: the tree is a fixed-height strip above the property grid
-   (hence "Dock top"), so the divider belongs on its bottom edge. */
-.ji-app__body.is-dock-top :deep(.ji-tree) {
+/* Vertical layout: the tree is a fixed-height full-width strip, so the divider
+   belongs on the edge that faces the property grid. */
+.ji-app__body.is-dock-top :deep(.ji-tree),
+.ji-app__body.is-dock-bottom :deep(.ji-tree) {
   flex: none;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   height: 220px;
   border-right: none;
+}
+
+.ji-app__body.is-dock-top :deep(.ji-tree) {
   border-bottom: 1px solid var(--ji-border);
+}
+
+.ji-app__body.is-dock-bottom :deep(.ji-tree) {
+  border-top: 1px solid var(--ji-border);
 }
 </style>

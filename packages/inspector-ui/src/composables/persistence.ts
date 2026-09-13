@@ -1,13 +1,21 @@
 import type { Transport } from "@just-inspector/client";
 
 /**
- * Where the scene tree panel is docked relative to the property grid.
+ * User-chosen dock side for the scene tree panel, relative to the property grid.
  *
- * `"top"` lays the tree out above the grid (the tree's own header/filter bar
- * ends up at the very top of the window); the id was called `"bottom"` before
- * 0.0.6 and saved values are migrated in `useInspector`.
+ * Only the two horizontal sides can be picked. The vertical layout is no longer
+ * a choice: a window taller than it is wide (portrait) stacks the tree above /
+ * below the grid automatically — see [`TreeDockSide`].
  */
-export type TreeDockPosition = "left" | "top" | "right";
+export type TreeDockPosition = "left" | "right";
+
+/**
+ * The dock side that is actually rendered: [`TreeDockPosition`] while the window
+ * is landscape, mapped to a full-width strip while it is portrait (`left` ->
+ * `top`, `right` -> `bottom`). The side panel and the property grid do not fit
+ * side by side on a narrow window, so the shell stacks them instead.
+ */
+export type TreeDockSide = "left" | "right" | "top" | "bottom";
 
 /** Tiny key/value persistence that works in both packaging modes:
  *  - browser: localStorage

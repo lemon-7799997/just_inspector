@@ -7,7 +7,11 @@ import TreeNodeItem from "./TreeNodeItem.vue";
 defineProps<{
   root: TreeNode | null;
   selectedId: string | null;
-  /** Current dock position (persisted by the app shell). */
+  /**
+   * Persisted dock *choice* (`left` / `right`). The vertical layout is not a
+   * choice: a portrait window derives `top` / `bottom` from it, see
+   * `TreeDockSide` in the persistence module.
+   */
   dock: TreeDockPosition;
 }>();
 
@@ -33,9 +37,10 @@ function select(id: string): void {
   emit("select", id);
 }
 
+/** Dock chooser: left / right only — a portrait window picks top/bottom for
+ * the user (see `TreeDockSide`). */
 const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }> = [
   { pos: "left", title: "Dock left", icon: "dock-left" },
-  { pos: "top", title: "Dock top", icon: "dock-top" },
   { pos: "right", title: "Dock right", icon: "dock-right" },
 ];
 </script>
@@ -54,10 +59,6 @@ const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }>
         <svg v-if="b.icon === 'dock-left'" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
           <rect x="2" y="2" width="4" height="12" rx="1" fill="currentColor" />
-        </svg>
-        <svg v-else-if="b.icon === 'dock-top'" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
-          <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
-          <rect x="2" y="2" width="12" height="4" rx="1" fill="currentColor" />
         </svg>
         <svg v-else viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.2" />
@@ -92,7 +93,7 @@ const dockButtons: Array<{ pos: TreeDockPosition; title: string; icon: string }>
   min-width: 180px;
   max-width: 45%;
   /* Flex items default to `min-height: auto`, which stops the list from
-     shrinking in the vertical (top-docked) layout — without this the panel
+     shrinking in the vertical (portrait) layout — without this the panel
      grows past the window instead of scrolling. */
   min-height: 0;
   display: flex;
